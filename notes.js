@@ -1,15 +1,18 @@
 const fs = require('fs')
 const chalk = require('chalk')
 
-const getNotes = function(){
+const getNotes = () => {
     return "your notes..."
 }
 
-const addNotes = function(title, body){
+
+const addNotes = (title, body) => {
     notes = loadNotes()
 
-    const duplicateNotes = notes.filter((note) => note.title === title)
-    if(duplicateNotes.length === 0) {
+    const duplicateNote = notes.find(note => note.title === title)
+    
+    /* !undefined === true  or  duplicateNote === undefined */
+    if(!duplicateNote) {    
         notes.push(
             {
                 title: title,
@@ -25,11 +28,10 @@ const addNotes = function(title, body){
 
 }
 
-const removeNote = function(title){
+// const removeNote = function(title){
+const removeNote = (title) => {
     notes = loadNotes()
-    const notesToKeep = notes.filter(function(note){
-        return note.title != title
-    })
+    const notesToKeep = notes.filter((note) => note.title != title)
 
     if(notes.length > notesToKeep.length){
         saveNotes(notesToKeep)
@@ -40,11 +42,34 @@ const removeNote = function(title){
 
 }
 
-const saveNotes = function(notes){
+const listNotes = () => {
+    console.log(chalk.inverse.bold("Your Notes"))
+    notes = loadNotes()
+    notes.forEach(note => {
+        console.log(note.title)
+    });
+}
+
+
+const readNote = (title) => {
+    console.log("searching for %s", title)
+    const notes = loadNotes()
+    const note = notes.find(note => note.title === title)
+
+    if(note) {
+        console.log(chalk.inverse.blue(note.title))
+        console.log(note.body)
+    }
+    else
+        console.log(chalk.inverse.red("Note not found!"))
+}
+
+
+const saveNotes = (notes) => {
     fs.writeFileSync('notes.json', JSON.stringify(notes))
 }
 
-const loadNotes = function() {
+const loadNotes = () => {
     try {
         const notesBuffer = fs.readFileSync('notes.json')
         const notesData = notesBuffer.toString()
@@ -57,5 +82,7 @@ const loadNotes = function() {
 module.exports = {
     getNotes: getNotes,
     addNotes: addNotes,
-    removeNote: removeNote
+    removeNote: removeNote,
+    listNotes: listNotes,
+    readNote: readNote
 }
