@@ -1,4 +1,5 @@
 const fs = require('fs')
+const chalk = require('chalk')
 
 const getNotes = function(){
     return "your notes..."
@@ -17,10 +18,25 @@ const addNotes = function(title, body){
         )
         saveNotes(notes)
 
-        console.log('new note added')
+        console.log(chalk.green.inverse('new note added'))
     }
     else
-        console.log('note title taken!')
+        console.log(chalk.red.inverse('note title taken!'))
+
+}
+
+const removeNote = function(title){
+    notes = loadNotes()
+    const notesToKeep = notes.filter(function(note){
+        return note.title != title
+    })
+
+    if(notes.length > notesToKeep.length){
+        saveNotes(notesToKeep)
+        console.log(chalk.green.inverse.bold("Note Deleted!"))
+    }
+    else
+        console.log(chalk.red.inverse.bold("No Note Found!"))
 
 }
 
@@ -40,5 +56,6 @@ const loadNotes = function() {
 
 module.exports = {
     getNotes: getNotes,
-    addNotes: addNotes
+    addNotes: addNotes,
+    removeNote: removeNote
 }
